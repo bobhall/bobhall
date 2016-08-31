@@ -4,6 +4,8 @@ import urllib2
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 import re
+import datetime
+
 from wind_util import degrees_to_cardinal, get_average_wind_speeds
 
 DATE_TIME_FMT = "%d %b %Y %I:%M:%S %p %Z"
@@ -115,14 +117,48 @@ class WSFFerryResource(ObsResource):
         return results
 
 class CGRResource(ObsResource):
+
+    stations = [{'name':'POINT WILSON', 'position': {'lat':48.143, 'lon': -122.754}},
+                {'name':'POINT NO POINT', 'position': {'lat': 47.9119, 'lon': -122.5258}},
+                {'name': 'POINT ROBINSON', 'position': {'lat': 47.3881, 'lon': -122.3742}},
+                {'name': 'ALKI POINT', 'position': {'lat': 47.5763, 'lon': -122.4208}}]
+
     def parse(self, html):
         results = []
+        soup = BeautifulSoup(html)
+        raw_string = soup.find('pre', {'class':'glossaryProduct'}).text        
 
+        lines = raw_string.split('\n')
+
+        time_line = filter(lambda line: re.match(r'.*KSEW.*',line), lines)[0]
+        time_chunk = time_line[2]
+        day = time_chunk[0:2]
+        hour = time_chunk[2:4]
+        minutes = time_chunk[4:6]
+
+        date_time = datetime.datetime.now()
+
+        for station in self.stations:
+            station_line = filter(lambda line: re.match(r'.*{name}.*'.format(name=station['name']), line), lines)
+            conditions = station_line[0].split('/')[1].strip() # NW11, S04, etc.
+
+            match = re.match(r'([A-Z]+)(\d+)', conditions)
+            wind_dir = match.group(1)
+            wind_speed = match.group(2)
+
+            results.append({'wind_speed': int(wind_speed),
+                            'wind_dir': wind_dir,
+                            'station_name': station['name'].title(),
+                            'position': station['position']
+            })
         return results
 
 class ObsScraper:
     def __init__(self):
         return
+
+    def is_valid_result(self, result):
+        return isinstance(result,dict) and result.has_key('position') and result.has_key('wind_speed')
 
     def fetch_urls(self):
 
@@ -148,8 +184,14 @@ class ObsScraper:
             for resource in resources:
                 future = executor.submit(resource.load)
                 result = future.result()
-                if isinstance(result, dict) and result.has_key('position') and result.has_key('wind_speed'):
+
+                if isinstance(result,dict):
                     results.append(future.result())
+                elif isinstance(result, list):
+                    results.extend(result)
+
+                results = filter(self.is_valid_result, results)
+                
                 
         results.sort(key=lambda obs: obs['position']['lat'], reverse=True)
         return results
