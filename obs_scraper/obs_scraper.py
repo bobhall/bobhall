@@ -131,12 +131,18 @@ class CGRResource(ObsResource):
         lines = raw_string.split('\n')
 
         time_line = filter(lambda line: re.match(r'.*KSEW.*',line), lines)[0]
-        time_chunk = time_line[2]
-        day = time_chunk[0:2]
-        hour = time_chunk[2:4]
-        minutes = time_chunk[4:6]
+        time_chunk = time_line.split(' ')[2]
+        day = int(time_chunk[0:2])
+        hour = int(time_chunk[2:4])
+        minutes = int(time_chunk[4:6])
 
-        date_time = datetime.datetime.now()
+        now = datetime.datetime.utcnow()
+        try:
+            date_time = datetime.datetime(now.year,now.month,day,hour,minutes)
+        except:
+            now = now - datetime.timedelta(hours=12)
+        date_time = datetime.datetime(now.year,now.month,day,hour,minutes)
+        
 
         for station in self.stations:
             station_line = filter(lambda line: re.match(r'.*{name}.*'.format(name=station['name']), line), lines)
@@ -149,7 +155,8 @@ class CGRResource(ObsResource):
             results.append({'wind_speed': int(wind_speed),
                             'wind_dir': wind_dir,
                             'station_name': station['name'].title(),
-                            'position': station['position']
+                            'position': station['position'],
+                            'time': date_time.strftime(DATE_TIME_FMT)
             })
         return results
 
