@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 import re
 import datetime
+import pytz
 
 from wind_util import degrees_to_cardinal, get_average_wind_speeds
 
@@ -36,7 +37,6 @@ class NDBCResource(ObsResource):
         wind_direction = None
 
         # Wind direction
-        print "raw_string", raw_string
         match = re.search(r'(\d+\xb0)', unicode(raw_string))
         if match:
             wind_direction = int(re.search(r'\d+', match.group()).group())
@@ -141,7 +141,10 @@ class CGRResource(ObsResource):
             date_time = datetime.datetime(now.year,now.month,day,hour,minutes)
         except:
             now = now - datetime.timedelta(hours=12)
-        date_time = datetime.datetime(now.year,now.month,day,hour,minutes)
+        date_time = datetime.datetime(now.year,now.month,day,hour,minutes,tzinfo=pytz.utc)
+        
+        pacific = pytz.timezone('US/Pacific')
+        date_time = date_time.astimezone(pacific)
         
 
         for station in self.stations:
