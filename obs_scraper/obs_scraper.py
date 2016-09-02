@@ -76,7 +76,7 @@ class WSFFerryResource(ObsResource):
         rows = [row.text.split('\n') for row in rows]
 
         position = None
-        date_time = None
+        ferry_time = None
         area_name = None
 
         found_rows = False
@@ -89,7 +89,8 @@ class WSFFerryResource(ObsResource):
                     continue
                 if lat > area['bottom'] and lat < area['top'] and lon > area['left'] and lon < area['right']:
                     found_rows = True
-                    date_time = row[1]
+                    if not ferry_time:
+                        ferry_time = row[1]
                     wind_speed = row[6]
                     wind_dir = row[5]
                     valid_rows.append((int(wind_speed),int(wind_dir)))
@@ -103,14 +104,18 @@ class WSFFerryResource(ObsResource):
 
         if 0 == len(valid_rows) or not found_rows:
             return None
+            
+        pacific = pytz.timezone('US/Pacific')
+        date_time = dtparser.parse(ferry_time)
+        date_time = pacific.localize(date_time)
 
-        wind_speed,wind_dir = get_average_wind_speeds(valid_rows)
+        wind_speed, wind_dir = get_average_wind_speeds(valid_rows)
 
         results = {'wind_speed': round(wind_speed,2),
                    'wind_dir': degrees_to_cardinal(wind_dir),
                    'position': {'lat': position[0],
                                 'lon': position[1]},
-                   'time': date_time,
+                   'time': date_time.strftime(DATE_TIME_FMT),
                    'station_name': area_name,
                    'vessel_name': self.vessel_name}
 
@@ -151,11 +156,15 @@ class CGRResource(ObsResource):
             station_line = filter(lambda line: re.match(r'.*{name}.*'.format(name=station['name']), line), lines)
             conditions = station_line[0].split('/')[1].strip() # NW11, S04, etc.
 
-            match = re.match(r'([A-Z]+)(\d+)', conditions)
-            wind_dir = match.group(1)
-            wind_speed = match.group(2)
+            try:
+                match = re.match(r'([A-Z]+)(\d+)', conditions)
+                wind_dir = match.group(1)
+                wind_speed = int(match.group(2))
+            except:
+                wind_dir = None
+                wind_speed = None
 
-            results.append({'wind_speed': int(wind_speed),
+            results.append({'wind_speed': wind_speed,
                             'wind_dir': wind_dir,
                             'station_name': station['name'].title(),
                             'position': station['position'],
