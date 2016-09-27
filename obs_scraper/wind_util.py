@@ -3,7 +3,7 @@ import math
 def degrees_to_cardinal(degrees):
     cardinals = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S',
                  'SSW','SW','WSW','W','WNW','NW','NNW']
-    return cardinals[int(math.floor(((int(degrees)+11.25)%360)/22.25))]
+    return cardinals[int(math.floor(((int(degrees)+11.25)%360)/22.5))]
 
 def degrees_to_radians(degrees):
     return degrees * math.pi / 180
