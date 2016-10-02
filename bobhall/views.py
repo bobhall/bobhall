@@ -7,13 +7,21 @@ from concurrent.futures import ThreadPoolExecutor
 
 from obs_scraper import ObsScraper
 
+import dateutil.parser as dtparser
+import datetime
+import pytz
+
 def home(request):
     return render(request, 'home.html')
 
 def pugetsoundwind(request):
-
     scraper = ObsScraper()
     obs = scraper.fetch_urls()
+
+    now = datetime.datetime.now(pytz.timezone('US/Pacific'))
+    for observation in obs:
+        if (now - dtparser.parse(observation['time'])) > datetime.timedelta(hours=2):
+            observation['late'] = True
 
     return render(request, 
                   'pugetsoundwind.html', 

@@ -15,9 +15,9 @@
        <span class="wind-direction"> {{ observation.wind_direction }} </span>
        <br>
        {% if observation.late %}
-       <span class="time-stamp"> {{ observation.time }} </span>
-       {% else %}
        <span class="time-stamp-late"> {{ observation.time }} </span>
+       {% else %}
+       <span class="time-stamp"> {{ observation.time }} </span>
        {% endif %}
       </div>
     {% endfor %}
