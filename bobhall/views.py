@@ -11,7 +11,13 @@ def home(request):
     return render(request, 'home.html')
 
 def pugetsoundwind(request):
-    return render(request, 'pugetsoundwind.html')
+
+    scraper = ObsScraper()
+    obs = scraper.fetch_urls()
+
+    return render(request, 
+                  'pugetsoundwind.html', 
+                  context={'observations': obs})
 
 def ferries(request):
     return render(request, 'ferries.html')

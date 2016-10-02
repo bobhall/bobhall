@@ -1,11 +1,26 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Bob Hall</title>
-</head>
+  <head>
+    <title>Puget Sound Wind</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/pugetsoundwind.css">
+  </head>
+
   <body>
-
-    <h2>Look at the pretty boats...</h2>
-
+  <div class="outer-container">
+    {% for observation in observations %}
+      <div class="wind-box"> 
+       <span class="station-name"> {{ observation.station_name }}</span>
+       <br>
+       <span class="wind-speed"> {{ observation.wind_speed }} Kts, </span>
+       <span class="wind-direction"> {{ observation.wind_direction }} </span>
+       <br>
+       {% if observation.late %}
+       <span class="time-stamp"> {{ observation.time }} </span>
+       {% else %}
+       <span class="time-stamp-late"> {{ observation.time }} </span>
+       {% endif %}
+      </div>
+    {% endfor %}
+  </div>
   </body>
 </html>
