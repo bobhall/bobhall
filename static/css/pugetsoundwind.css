@@ -1,0 +1,28 @@
+.wind-box{
+    border: 2px solid;
+    padding: 10px 40px;
+    
+    padding-top: 15px;
+    padding-bottom: 15px;
+    
+    margin: 20px;
+    
+    border-radius: 25px;
+    width: 300px;
+    background: #dddddd;
+    display: block;
+}
+
+.station-name{
+    font-weight: bold;
+}
+
+.time-stamp{
+    font-size: small;
+    color: green;
+}
+
+.time-stamp-late{
+    font-size: small;
+    color: red;
+}
