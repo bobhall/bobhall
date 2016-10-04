@@ -130,10 +130,7 @@ class CGRResource(ObsResource):
 
     def parse(self, html):
         results = []
-        soup = BeautifulSoup(html)
-        raw_string = soup.find('pre', {'class':'glossaryProduct'}).text        
-
-        lines = raw_string.split('\n')
+        lines = html.split('\n')
 
         time_line = filter(lambda line: re.match(r'.*KSEW.*',line), lines)[0]
         time_chunk = time_line.split(' ')[2]
@@ -187,7 +184,7 @@ class ObsScraper:
                      NDBCResource('http://www.ndbc.noaa.gov/mobile/station.php?station=wpow1',
                                   "West Point",
                                   {'lat': 47.662, 'lon':-122.436}),
-                     CGRResource('http://forecast.weather.gov/product.php?site=GRB&product=CGR&issuedby=SEW'),
+                     CGRResource('http://tgftp.nws.noaa.gov/data/raw/sx/sxus40.ksew.cgr.sew.txt'),
                      WSFFerryResource('http://i90.atmos.washington.edu/ferry/tabular/FP.htm',
                                       "F/V Puyallup"),
                      WSFFerryResource('http://i90.atmos.washington.edu/ferry/tabular/FW.htm',
