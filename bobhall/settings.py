@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '!8g!ci*=ah*jj$*gwu(#=!a#b_-*7*+n&_+b8uyntbv-vqclg*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.obhall.com', 'b.obhall.com']
 
 
 # Application definition
@@ -54,7 +54,7 @@ ROOT_URLCONF = 'bobhall.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['static/templates'],
+        'DIRS': [os.path.join(BASE_DIR, "static/templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
