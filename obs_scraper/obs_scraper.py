@@ -112,7 +112,7 @@ class WSFFerryResource(ObsResource):
         wind_speed, wind_dir = get_average_wind_speeds(valid_rows)
 
         results = {'wind_speed': round(wind_speed,2),
-                   'wind_dir': degrees_to_cardinal(wind_dir),
+                   'wind_direction': degrees_to_cardinal(wind_dir),
                    'position': {'lat': position[0],
                                 'lon': position[1]},
                    'time': date_time.strftime(DATE_TIME_FMT),
@@ -165,7 +165,7 @@ class CGRResource(ObsResource):
                 wind_speed = None
 
             results.append({'wind_speed': wind_speed,
-                            'wind_dir': wind_dir,
+                            'wind_direction': wind_dir,
                             'station_name': station['name'].title(),
                             'position': station['position'],
                             'time': date_time.strftime(DATE_TIME_FMT)
