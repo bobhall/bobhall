@@ -34,3 +34,10 @@ def obs(request):
     scraper = ObsScraper()
     obs = scraper.fetch_urls()
     return JsonResponse(obs, safe=False)
+
+
+def aboutpugetsoundwind(request):
+    return render(request, 'aboutpugetsoundwind.html')
+
+def aboutferryvisualization(request):
+    return render(request, 'aboutferryvisualization.html')

@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>About WA State Ferry Obs Visualization</title>
+</head>
+
+<body>
+<h3>Background</h3>
+The ferries in Washington State are equiped with anemometers that report wind observations and the position from the vessels as they move from port to port. This project was a collaboration between University of Washington and Washingotn State Ferries. The project page can be found <a href="http://i90.atmos.washington.edu/ferry/Ferryjs/mainframe1.htm">here.</a>
+<p>
+<h3>My Project</h3>
+I was interested in animating the observations from the the ferries. I wrote a web scraper using <b>Python</b> to gather and store the observations in <b>MySQL</b>. I then wrote a simple web page that includes an embedded google map. The page lets the user select the ferry (by vessel name) and the date. You can then press Play to animate the ferry for that day. The wind observation is represented by an arrow which points in the direction of the observed wind and is sized according to the magnitude of the wind speed. The arrows are rendered using <b>canvas</b>. The browser gets the wind data by calling a URL using <b>Ajax</b>. The URL is part of a small service that I implemented using <b>PHP</b>.
+
+<p>
+<h3>Future work</h3>
+There are many improvements I'm hoping to make. First of all, I'd like to scap the PHP service I wrote, as it is kind of clunky (I wrote all of this over 5 years ago). I would like to implement a general RESTful API to query the wind data I've been scraping over the years. I would also like to let users specify start & end times for the period in which they want to animate the data. (Currently you have to choose a date and you get 24 hours of data starting and ending at Midnight). I would also like to display a graph of the data that would show the data over the selected time period.
+
+
+</body>
+
+</html>

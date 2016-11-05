@@ -24,4 +24,6 @@ urlpatterns = [
     url(r'^ferries/', views.ferries),
     url(r'^pugetsoundwind/', views.pugetsoundwind),
     url(r'^obs/', views.obs),
+    url(r'^about/pugetsoundwind/', views.aboutpugetsoundwind),
+    url(r'^about/ferryvisualization/', views.aboutferryvisualization)
 ]
