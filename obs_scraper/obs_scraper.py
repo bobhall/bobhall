@@ -51,7 +51,8 @@ class NDBCResource(ObsResource):
         result = {'wind_speed': wind_speed,
                   'time': date_time.strftime(DATE_TIME_FMT),
                   'station_name': self.name,
-                  'position': self.position}
+                  'position': self.position,
+                  'station_type': 'ndbc'}
         if wind_direction != None and isinstance(wind_direction, int):
             result['wind_direction'] = degrees_to_cardinal(wind_direction)
         return result
@@ -117,7 +118,8 @@ class WSFFerryResource(ObsResource):
                                 'lon': position[1]},
                    'time': date_time.strftime(DATE_TIME_FMT),
                    'station_name': area_name,
-                   'vessel_name': self.vessel_name}
+                   'vessel_name': self.vessel_name,
+                   'station_type': 'ferry'}
 
         return results
 
@@ -165,8 +167,9 @@ class CGRResource(ObsResource):
                             'wind_direction': wind_dir,
                             'station_name': station['name'].title(),
                             'position': station['position'],
-                            'time': date_time.strftime(DATE_TIME_FMT)
-            })
+                            'time': date_time.strftime(DATE_TIME_FMT),
+                            'station_type': 'cgr'
+                        })
         return results
 
 class ObsScraper:
