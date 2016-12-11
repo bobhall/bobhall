@@ -29,24 +29,27 @@ class NDBCResource(ObsResource):
         self.position = position
 
     def parse(self, html):
-        soup = BeautifulSoup(html, 'html.parser')
-        raw_string = soup.body.find_all('b')[0].next.next
-        time_string = soup.body.find_all('p')[1].next
-        
-        wind_speed = None
-        wind_direction = None
+        try:
+            soup = BeautifulSoup(html, 'html.parser')
+            raw_string = soup.body.find_all('b')[0].next.next
+            time_string = soup.body.find_all('p')[1].next
 
-        # Wind direction
-        match = re.search(r'(\d+\xb0)', unicode(raw_string))
-        if match:
-            wind_direction = int(re.search(r'\d+', match.group()).group())
+            wind_speed = None
+            wind_direction = None
 
-        # Wind speed
-        match = re.search(r'\d+ kts', raw_string)
-        if match:
-            wind_speed = int(re.search(r'\d+', match.group()).group())
+            # Wind direction
+            match = re.search(r'(\d+\xb0)', unicode(raw_string))
+            if match:
+                wind_direction = int(re.search(r'\d+', match.group()).group())
 
-        date_time = dtparser.parse(time_string)
+            # Wind speed
+            match = re.search(r'\d+ kts', raw_string)
+            if match:
+                wind_speed = int(re.search(r'\d+', match.group()).group())
+
+            date_time = dtparser.parse(time_string)
+        except:
+            return None
 
         result = {'wind_speed': wind_speed,
                   'time': date_time.strftime(DATE_TIME_FMT),
@@ -210,7 +213,6 @@ class ObsScraper:
                     results.extend(result)
 
                 results = filter(self.is_valid_result, results)
-                
                 
         results.sort(key=lambda obs: obs['position']['lat'], reverse=True)
         return results
