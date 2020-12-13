@@ -1,13 +1,14 @@
 
 import dateutil.parser as dtparser
-import urllib2
+import urllib.request
+
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 import re
 import datetime
 import pytz
 
-from wind_util import degrees_to_cardinal, get_average_wind_speeds
+from obs_scraper.wind_util import degrees_to_cardinal, get_average_wind_speeds
 
 DATE_TIME_FMT = "%d %b %Y %I:%M:%S %p %Z"
 
@@ -17,9 +18,8 @@ class ObsResource(object):
         self.url = url
 
     def load(self):
-        result = urllib2.urlopen(self.url)
-        html = ''.join(result.readlines())
-        return self.parse(html)
+        result = urllib.request.urlopen(self.url)
+        return self.parse(result.read())
 
 class NDBCResource(ObsResource):
 
@@ -190,16 +190,8 @@ class ObsScraper:
                      NDBCResource('http://www.ndbc.noaa.gov/mobile/station.php?station=wpow1',
                                   "West Point",
                                   {'lat': 47.662, 'lon':-122.436}),
-                     CGRResource('http://tgftp.nws.noaa.gov/data/raw/sx/sxus40.ksew.cgr.sew.txt'),
-                     WSFFerryResource('http://i90.atmos.washington.edu/ferry/tabular/FP.htm',
-                                      "F/V Puyallup"),
-                     WSFFerryResource('http://i90.atmos.washington.edu/ferry/tabular/FW.htm',
-                                      "F/V Walla Walla"),
-                     WSFFerryResource('http://i90.atmos.washington.edu/ferry/tabular/FS.htm',
-                                      "F/V Sealth"),
-                     WSFFerryResource('http://i90.atmos.washington.edu/ferry/tabular/FE.htm',
-                                      "F/V Elwha"),]
 
+                     CGRResource('http://tgftp.nws.noaa.gov/data/raw/sx/sxus40.ksew.cgr.sew.txt'),]
 
         results = []
         with ThreadPoolExecutor(max_workers=4) as executor:

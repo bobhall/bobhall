@@ -1,11 +1,10 @@
 
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-import urllib2
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 
-from obs_scraper import ObsScraper
+from obs_scraper.obs_scraper import ObsScraper
 
 import dateutil.parser as dtparser
 import datetime
