@@ -19,7 +19,7 @@ class ObsResource(object):
 
     def load(self):
         result = urllib.request.urlopen(self.url)
-        return self.parse(result.read())
+        return self.parse(result.read().decode('utf-8'))
 
 class NDBCResource(ObsResource):
 
@@ -38,7 +38,7 @@ class NDBCResource(ObsResource):
             wind_direction = None
 
             # Wind direction
-            match = re.search(r'(\d+\xb0)', unicode(raw_string))
+            match = re.search(r'(\d+\xb0)', raw_string)
             if match:
                 wind_direction = int(re.search(r'\d+', match.group()).group())
 
@@ -136,8 +136,7 @@ class CGRResource(ObsResource):
     def parse(self, html):
         results = []
         lines = html.split('\n')
-
-        time_line = filter(lambda line: re.match(r'.*KSEW.*',line), lines)[0]
+        time_line = next(filter(lambda line: re.match(r'.*KSEW.*',line), lines))
         time_chunk = time_line.split(' ')[2]
         day = int(time_chunk[0:2])
         hour = int(time_chunk[2:4])
@@ -156,7 +155,7 @@ class CGRResource(ObsResource):
 
         for station in self.stations:
             station_line = filter(lambda line: re.match(r'.*{name}.*'.format(name=station['name']), line), lines)
-            conditions = station_line[0].split('/')[1].strip() # NW11, S04, etc.
+            conditions = next(station_line).split('/')[1].strip() # NW11, S04, etc.
 
             try:
                 match = re.match(r'([A-Z]+)(\d+)', conditions)
@@ -180,7 +179,7 @@ class ObsScraper:
         return
 
     def is_valid_result(self, result):
-        return isinstance(result,dict) and result.has_key('position') and result.has_key('wind_speed')
+        return isinstance(result,dict) and 'position' in result and 'wind_speed' in result
 
     def fetch_urls(self):
 
@@ -204,7 +203,6 @@ class ObsScraper:
                 elif isinstance(result, list):
                     results.extend(result)
 
-                results = filter(self.is_valid_result, results)
-                
+        results = list(filter(self.is_valid_result, results))
         results.sort(key=lambda obs: obs['position']['lat'], reverse=True)
         return results
