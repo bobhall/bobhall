@@ -1,5 +1,5 @@
 beautifulsoup4==4.9.3
-Django==3.1.4
+Django==3.1.9
 futures==3.0.5
 python-dateutil==2.5.3
 pytz==2016.6.1
